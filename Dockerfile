@@ -27,7 +27,17 @@ RUN apt-get -qq update \
       lib32z1 \
       unzip \
       locales \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+      ruby \
+      ruby-rdoc \
+      ruby-irb \
+      ruby-dev \
+      openssh \
+      g++ \
+      make \
+      bash \
+      build-essential \
+&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN rm -f /etc/ssl/certs/java/cacerts; \
@@ -53,3 +63,11 @@ RUN mkdir -p /root/.android \
 
 RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt \
  && ${ANDROID_HOME}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} ${PACKAGES}
+
+# Add fastlane
+RUN gem install fastlane -NV
+
+ #firebase-tools setup
+ADD https://github.com/firebase/firebase-tools/releases/download/v7.3.1/firebase-tools-linux firebase-tools-linux
+RUN chmod +x firebase-tools-linux
+RUN ./firebase-tools-linux --open-sesame appdistribution 
